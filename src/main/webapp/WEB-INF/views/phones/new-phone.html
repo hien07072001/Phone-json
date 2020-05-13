@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Phone</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        <!---ready(): Sự kiện này ra khi DOM (Document Object Model) được tải hoàn chỉnh.-->
+        $(document).ready(function () {
+            //-submit(): Sự kiện này xảy ra khi người dùng submit (gửi đi) dữ liệu.
+            //$('#newSmartphoneForm').submit(function(event) là funtion được gọi khi submit from có id là newSmartphoneForm
+            $('#newSmartphoneForm').submit(function (event) {
+                //val () chủ yếu được sử dụng để lấy các giá trị của các phần tử biểu mẫu như đầu vào, chọn và textarea
+                let producer = $('#producer').val();
+                let model = $('#model').val();
+                let price = $('#price').val();
+                let json = { "producer" : producer, "model" : model, "price": price};
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    type : "POST",
+                    data: JSON.stringify(json),
+                    url: "/createnewPhone",
+                    success: function(smartphone) {
+                        let respContent = "";
+                        respContent += "<span class='success'>Smartphone was created: [";
+                        respContent += smartphone.producer + " : ";
+                        respContent += smartphone.model + " : " ;
+                        respContent += smartphone.price + "]</span>"
+                        $("#sPhoneFromResponse").html(respContent);
+                    }
+                });
+                event.preventDefault();
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="container">
+    <h1>Create new Smartphone</h1>
+    <div>
+        <p>Here you can create new Smartphone:</p>
+        <div id="sPhoneFromResponse"></div>
+    </div>
+    <form id="newSmartphoneForm" th:object="${sphone}">
+        <table>
+            <tbody>
+            <tr>
+                <td>Producer:</td>
+                <td>
+                    <select id="producer">
+                        <option value="NOKIA">Nokia</option>
+                        <option selected="selected" value="IPHONE">iPhone</option>
+                        <option value="HTC">HTC</option>
+                        <option value="SAMSUNG">Samsung</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Model:</td>
+                <td><input th:field="*{model}" /></td>
+            </tr>
+            <tr>
+                <td>Price:</td>
+                <td><input th:field="*{price}" /></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Create" /></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <a th:href="@{/abc}">List</a>
+</div>
+</body>
+</html>
